@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class View {
-    // Atributo
+    // Atributos
     private JButton buttonMsg;
     private JPanel panelMain;
 
@@ -21,8 +21,8 @@ public class View {
         frame.setSize(400, 400);
     }
 
-    // Método View
-    public View() {
+    // Função view
+    private View() {
         buttonMsg.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
