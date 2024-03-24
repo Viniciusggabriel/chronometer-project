@@ -1,15 +1,20 @@
 package views;
 
-import controller.DatabaseController;
+import controller.*;
+import controller.QueryExecutorSele;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.security.Key;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalTime;
 
-public class MainView extends JDialog {
+public class MainView extends JFrame {
     private JPanel contentPanel;
     private JButton buttonSelect;
     private JButton buttonInsertReset;
@@ -21,29 +26,34 @@ public class MainView extends JDialog {
     private JLabel labelMinutes;
     private JLabel labelSeconds;
     private JButton buttonRun;
+    private JPanel timerPanel;
+    private JLabel firstLap;
+    private JLabel secondLap;
+    private JLabel totalLap;
+    private JPanel lapPanel;
     private DefaultTableModel tableModel;
     private Timer timer;
     private int hoursTimer = 0;
     private int minutesTimer = 0;
     private int secondsTimer = 0;
-    private  LocalTime resultTimer = LocalTime.of(00,00,00);
-
+    private LocalTime resultTimer = LocalTime.of(00, 00, 00);
     private boolean activatedTimer = false;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            MainView dialog = new MainView();
-            dialog.pack(); // Faz um tamanho antes dos components serem carregados
-            dialog.setVisible(true);
+            MainView frame = new MainView();
+            frame.pack(); // Faz um tamanho antes dos components serem carregados
+            frame.setVisible(true);
         });
     }
 
-    private void onSelectDb() {
-        // Lógica para um evento
-        DatabaseController dataBase = new DatabaseController();
+    private void onSelectDb() throws SQLException {
 
-        Object[] resultSelectClockLastValue = dataBase.querySelectDataBase("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 1;", "TIME_LAP");
-        Object[] resultSelectClockFullValues = dataBase.querySelectDataBase("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 2", "TIME_LAP");
+        DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
+        QueryExecutorSele dataBase = new QueryExecutorSele(connectionManager);
+
+        Object[] resultSelectClockLastValue = dataBase.executeQuery("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 1;", "TIME_LAP");
+        Object[] resultSelectClockFullValues = dataBase.executeQuery("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 2", "TIME_LAP");
 
         if (resultSelectClockLastValue.length == 0 && resultSelectClockFullValues.length == 0) {
             JOptionPane.showMessageDialog(null, "Não existe valores dentro do banco de dados", "Erro", JOptionPane.WARNING_MESSAGE);
@@ -69,25 +79,39 @@ public class MainView extends JDialog {
 
         LocalTime totalTime = LocalTime.of(hoursSelect, minutesSelect, secondsSelect);
 
-        Object[] rowData = {firstValue, penultimateValue, totalTime};
-        tableModel.addRow(rowData);
+        try {
+            firstLap.setText("Primeira Volta: " + firstValue);
+            secondLap.setText("Segunda Volta: " + penultimateValue);
+            totalLap.setText("Total das Voltas: " + String.valueOf(totalTime));
+        } catch (Exception error) {
+            JOptionPane.showMessageDialog(null, "Erro ao inserir dados na tela: " + error, "Error", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
-    // Além de enviar tem de parar o cronometro
-    private void onInsertDb(Time data) {
+    private void onInsertDb(Time data) throws SQLException {
         activatedTimer = false;
         hoursTimer = 0;
         labelHours.setText("Horas: " + hoursTimer);
         minutesTimer = 0;
         labelMinutes.setText("Minutos: " + minutesTimer);
         secondsTimer = 0;
-        labelSeconds.setText("Segundos: " + secondsTimer);
+        labelSeconds.setText("firstLap: " + secondsTimer);
         if (timer != null) {
             timer.stop();
+            buttonRun.setBackground(Color.WHITE);
+        }
+        try {
+            DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
+            QueryExecutorImpl dataBase = new QueryExecutorImpl(connectionManager);
+            dataBase.executeInsert("CALL INSERT_DATA_TIME('" + data + "');");
+
+            // Mensagem de sucesso caso item seja inserido
+            ImageIcon icon = new ImageIcon("src/img/check-check.png");
+            JOptionPane.showMessageDialog(null, "Tempo inserido com sucesso", "Sucesso", JOptionPane.PLAIN_MESSAGE, icon);
+        } catch (SQLException error) {
+            JOptionPane.showMessageDialog(null, "Erro ao inserir tempo dentro do banco de dados: " + error, "Error", JOptionPane.WARNING_MESSAGE);
         }
 
-        DatabaseController dataBase = new DatabaseController();
-        dataBase.queryInsertDataBase(data);
     }
 
     private void onInitialize() {
@@ -100,7 +124,7 @@ public class MainView extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 secondsTimer++;
-                labelSeconds.setText("Segundos: " + secondsTimer);
+                labelSeconds.setText("firstLap: " + secondsTimer);
                 if (secondsTimer >= 60) {
                     minutesTimer++;
                     secondsTimer = 0;
@@ -111,7 +135,7 @@ public class MainView extends JDialog {
                         labelHours.setText("Horas: " + hoursTimer);
                     }
                 }
-               resultTimer = LocalTime.of(hoursTimer, minutesTimer, secondsTimer);
+                resultTimer = LocalTime.of(hoursTimer, minutesTimer, secondsTimer);
             }
         });
         timer.start();
@@ -125,29 +149,29 @@ public class MainView extends JDialog {
     // Define tudo que tera na minha tela
     public MainView() {
         /*
-        * Definições
-        */
+         * Definições
+         */
         setContentPane(contentPanel);
-        setModal(true);
         getRootPane().setDefaultButton(buttonSelect);
 
         /*
-        * Components
-        */
-        tableModel = new DefaultTableModel();
-        tableModel.addColumn("Primeira volta");
-        tableModel.addColumn("Segunda volta");
-        tableModel.addColumn("Soma das voltas");
-
-        tableTime.setModel(tableModel);
-
-
-        /*
-        * Eventos
-        */
+         * Eventos
+         */
         // Eventos botõe
-        buttonSelect.addActionListener(e -> onSelectDb());
-        buttonInsertReset.addActionListener(e -> onInsertDb(Time.valueOf(resultTimer)));
+        buttonSelect.addActionListener(e -> {
+            try {
+                onSelectDb();
+            } catch (SQLException error) {
+                throw new RuntimeException("Erro ao requisitar valores: " + error); // Exeção de tempo de execução em java
+            }
+        });
+        buttonInsertReset.addActionListener(e -> {
+            try {
+                onInsertDb(Time.valueOf(resultTimer));
+            } catch (SQLException error) {
+                throw new RuntimeException("Erro ao inserir valor: " + error);
+            }
+        });
         buttonRun.addActionListener((e) -> {
             if (!activatedTimer) onInitialize();
         });
@@ -156,7 +180,7 @@ public class MainView extends JDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         // Evento no esc para fechar a pagina
-        contentPanel.registerKeyboardAction(e -> onExit(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPanel.registerKeyboardAction(e -> onExit(), KeyStroke.getKeyStroke(KeyEvent.VK_PRINTSCREEN, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // Evento para fixar a página em 80% da view user
         contentPanel.addComponentListener(new ComponentAdapter() {
@@ -169,12 +193,12 @@ public class MainView extends JDialog {
                 Dimension screenSize = toolkit.getScreenSize();
 
                 // (int) transforma o valor double ou float para int
-                int dialogMaxWidth = (int) (screenSize.getWidth() * 0.8);
-                int dialogMaxHeight = (int) (screenSize.getHeight() * 0.8);
+                int frameMaxWidth = (int) (screenSize.getWidth() * 0.4);
+                int frameMaxHeight = (int) (screenSize.getHeight() * 0.4);
 
-                if (screenSize.width > dialogMaxWidth || screenSize.height > dialogMaxHeight) {
+                if (screenSize.width > frameMaxWidth || screenSize.height > frameMaxHeight) {
                     // Redefine o tamanho da janela para o tamanho máximo permitido
-                    setSize(dialogMaxWidth, dialogMaxHeight);
+                    setSize(frameMaxWidth, frameMaxHeight);
                 }
             }
         });
