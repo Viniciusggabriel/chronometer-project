@@ -1,4 +1,4 @@
-package controller;
+package model;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
