@@ -1,18 +1,28 @@
 package views;
 
-import controller.*;
-import controller.QueryExecutorSele;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+import com.mysql.cj.xdevapi.JsonArray;
+import com.mysql.cj.xdevapi.JsonString;
+import model.*;
+import model.QueryExecutorSele;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.security.Key;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.Socket;
+import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainView extends JFrame {
     private JPanel contentPanel;
@@ -47,45 +57,46 @@ public class MainView extends JFrame {
         });
     }
 
-    private void onSelectDb() throws SQLException {
 
-        DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
-        QueryExecutorSele dataBase = new QueryExecutorSele(connectionManager);
+    private void onSelectDb() throws IOException {
+        // Request API
+        URL url = new URL("http://localhost:8080/");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(3000);
 
-        Object[] resultSelectClockLastValue = dataBase.executeQuery("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 1;", "TIME_LAP");
-        Object[] resultSelectClockFullValues = dataBase.executeQuery("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 2", "TIME_LAP");
+        int responseCode = connection.getResponseCode();
 
-        if (resultSelectClockLastValue.length == 0 && resultSelectClockFullValues.length == 0) {
-            JOptionPane.showMessageDialog(null, "Não existe valores dentro do banco de dados", "Erro", JOptionPane.WARNING_MESSAGE);
+        if (responseCode == HttpURLConnection.HTTP_OK) { // Caso dê certo a conexão
+            StringBuilder response = new StringBuilder();
+            String line;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            // Encerra a conexão
+            reader.close();
+            connection.disconnect();
+
+            String jsonResponse = response.toString();
+
+            Gson gson = new Gson();
+
+            Map<String, Object> responseData = gson.fromJson(jsonResponse, new TypeToken<Map<String, Object>>() {
+            }.getType());
+            String primeiraVolta = (String) responseData.get("primeira_volta");
+            String segundaVolta = (String) responseData.get("segunda_volta");
+            String totalVoltas = (String) responseData.get("total_voltas");
+
+            firstLap.setText("Primeira volta: " + primeiraVolta);
+            secondLap.setText("Segunda volta: " + segundaVolta);
+            totalLap.setText("Total de voltas: " + totalVoltas);
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro ao realizar consulta com o servidor: " + responseCode, "Erro GET request", JOptionPane.ERROR_MESSAGE);
         }
 
-        // Passa os valores obtidos para a tipagem de tempo
-        Time firstValue = (Time) resultSelectClockFullValues[0];
-        Time penultimateValue = (Time) resultSelectClockFullValues[1];
-
-        int hoursSelect = firstValue.getHours() + penultimateValue.getHours();
-        int minutesSelect = firstValue.getMinutes() + penultimateValue.getMinutes();
-        int secondsSelect = firstValue.getSeconds() + penultimateValue.getSeconds();
-
-        if (secondsSelect >= 60) {
-            minutesSelect += secondsSelect / 60;
-            secondsSelect %= 60;
-        }
-
-        if (minutesSelect > 59) {
-            hoursSelect += minutesSelect / 60;
-            minutesSelect %= 60;
-        }
-
-        LocalTime totalTime = LocalTime.of(hoursSelect, minutesSelect, secondsSelect);
-
-        try {
-            firstLap.setText("Primeira Volta: " + firstValue);
-            secondLap.setText("Segunda Volta: " + penultimateValue);
-            totalLap.setText("Total das Voltas: " + String.valueOf(totalTime));
-        } catch (Exception error) {
-            JOptionPane.showMessageDialog(null, "Erro ao inserir dados na tela: " + error, "Error", JOptionPane.WARNING_MESSAGE);
-        }
+        connection.disconnect();
     }
 
     private void onInsertDb(Time data) throws SQLException {
@@ -100,16 +111,38 @@ public class MainView extends JFrame {
             timer.stop();
             buttonRun.setBackground(Color.WHITE);
         }
-        try {
-            DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
-            QueryExecutorImpl dataBase = new QueryExecutorImpl(connectionManager);
-            dataBase.executeInsert("CALL INSERT_DATA_TIME('" + data + "');");
 
-            // Mensagem de sucesso caso item seja inserido
-            ImageIcon icon = new ImageIcon("src/img/check-check.png");
-            JOptionPane.showMessageDialog(null, "Tempo inserido com sucesso", "Sucesso", JOptionPane.PLAIN_MESSAGE, icon);
-        } catch (SQLException error) {
-            JOptionPane.showMessageDialog(null, "Erro ao inserir tempo dentro do banco de dados: " + error, "Error", JOptionPane.WARNING_MESSAGE);
+        try {
+            String postData = String.valueOf(data);
+            System.out.println(postData);
+            // URL da sua API
+            String apiUrl = "http://localhost:8080/submit"; // Substitua "localhost:porta" pela sua URL real
+
+            // Criação da conexão HTTP
+            URL url = new URL(apiUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true); // Habilita a saída para enviar dados no corpo da solicitação
+
+            // Escreve os dados no corpo da solicitação
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] postDataBytes = postData.getBytes("UTF-8");
+                os.write(postDataBytes);
+            }
+
+            // Verifica o código de resposta
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_CREATED) {
+                // Mensagem de sucesso caso item seja inserido
+                ImageIcon icon = new ImageIcon("src/img/check-check.png");
+                JOptionPane.showMessageDialog(null, "Tempo inserido com sucesso", "Sucesso", JOptionPane.PLAIN_MESSAGE, icon);
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao inserir tempo: ", "Error", JOptionPane.WARNING_MESSAGE);
+            }
+
+            connection.disconnect();
+        } catch (Exception error) {
+            JOptionPane.showMessageDialog(null, "Erro ao inserir valores dentro do servidor: " + error, "Erro POST request", JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -161,7 +194,7 @@ public class MainView extends JFrame {
         buttonSelect.addActionListener(e -> {
             try {
                 onSelectDb();
-            } catch (SQLException error) {
+            } catch (IOException error) {
                 throw new RuntimeException("Erro ao requisitar valores: " + error); // Exeção de tempo de execução em java
             }
         });
