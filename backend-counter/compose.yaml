@@ -17,9 +17,8 @@ services:
 
   # Usa o dockerfile para gerar o container, tem de ser trocado por image:
   server:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: viniciusgggabriel/backend-counter-server
+    restart: always
     ports:
       - "8080:8080"
     depends_on:

@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7ccec845-1af9-49a4-a597-3599a680b7b5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/.dockerignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/.dockerignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend-counter/compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/compose.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,13 +42,11 @@
     "settings.editor.selected.configurable": "settings.sync"
   }
 }]]></component>
-  <component name="RunManager" selected="Docker.backend-counter/compose.yaml: Compose Deployment">
-    <configuration name="maven-wrapper.jar" type="JarApplication" temporary="true">
-      <option name="JAR_PATH" value="$PROJECT_DIR$/backend-counter/.mvn/wrapper/maven-wrapper.jar" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager">
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
-      <deployment type="docker-compose.yml" />
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
       <method v="2" />
     </configuration>
     <configuration name="backend-counter/compose.yaml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
@@ -63,7 +60,6 @@
     <recent_temporary>
       <list>
         <item itemvalue="Docker.backend-counter/compose.yaml: Compose Deployment" />
-        <item itemvalue="JAR Application.maven-wrapper.jar" />
       </list>
     </recent_temporary>
   </component>
