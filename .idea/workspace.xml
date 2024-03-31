@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7ccec845-1af9-49a4-a597-3599a680b7b5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend-counter/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/.dockerignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/.dockerignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/compose.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,25 +30,39 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Docker.backend-counter/compose.yaml: Compose Deployment.executor": "Run",
     "JAR Application.maven-wrapper.jar.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/lap-counter-aps",
+    "last_opened_file_path": "Z:/lap-counter-aps",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.fileTypes"
+    "settings.editor.selected.configurable": "settings.sync"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Docker.backend-counter/compose.yaml: Compose Deployment">
     <configuration name="maven-wrapper.jar" type="JarApplication" temporary="true">
       <option name="JAR_PATH" value="$PROJECT_DIR$/backend-counter/.mvn/wrapper/maven-wrapper.jar" />
       <method v="2" />
     </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml" />
+      <method v="2" />
+    </configuration>
+    <configuration name="backend-counter/compose.yaml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="sourceFilePath" value="backend-counter/compose.yaml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Docker.backend-counter/compose.yaml: Compose Deployment" />
         <item itemvalue="JAR Application.maven-wrapper.jar" />
       </list>
     </recent_temporary>
