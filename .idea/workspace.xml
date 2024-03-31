@@ -5,25 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7ccec845-1af9-49a4-a597-3599a680b7b5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend-counter/docker.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/img/check-check.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/HttpServerManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/RouteSelectHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/RouteSubmitHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/DatabaseConnectionManage.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/ModelMethods.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/QueryExecutorImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/QueryExecutorSele.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/views/MainView.form" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/views/MainView.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sql/DataBaseCodes.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-counter/.gitignore" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +38,9 @@
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/lap-counter-aps",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "preferences.fileTypes"
   }
 }]]></component>
@@ -65,6 +54,13 @@
         <item itemvalue="JAR Application.maven-wrapper.jar" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-22-openjdk-22-3183f394aec4-bad0321e" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
