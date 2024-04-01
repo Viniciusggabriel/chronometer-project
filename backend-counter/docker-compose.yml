@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  #  Imagem do MYSQL, passa os dados de um usuário root
+  #  Imagem do MYSQL, passa os dados de um usuário root por meio do .env
   mysql:
     image: mysql:8.3.0-oracle
     restart: always
@@ -15,10 +15,13 @@ services:
     networks:
       - minha-net
 
-  # Usa o dockerfile para gerar o container, tem de ser trocado por image:
   server:
-    image: viniciusgggabriel/backend-counter-server
-    restart: always
+    image: viniciusgggabriel/backend-counter-server:1.0.0
+    # Variáveis de ambiente do .env local para o .env container
+    environment:
+      - MYSQL_URL=${MYSQL_URL}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - "8080:8080"
     depends_on:

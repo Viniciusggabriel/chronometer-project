@@ -4,6 +4,16 @@ LABEL name="backend-counter".
 
 WORKDIR /app
 
+# Argumentos que vão ser inseridos dentro do .env
+ARG MYSQL_URL
+ARG MYSQL_USER
+ARG MYSQL_ROOT_PASSWORD
+
+# Insere dessa forma dentro do .env
+RUN echo "MYSQL_URL=$MYSQL_URL" >> .env
+RUN echo "MYSQL_USER=$MYSQL_USER" >> .env
+RUN echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" >> .env
+
 # Arquivo de dependência
 COPY pom.xml .
 
@@ -12,7 +22,6 @@ RUN mvn dependency:go-offline -B
 
 # Copia os arquivos
 COPY src /app/src
-COPY .env /app/.env
 
 # Compila o build .jar
 RUN mvn package
