@@ -49,7 +49,7 @@ A estrutura do projeto segue um padrão comum de projetos Java, incluindo a orga
     MYSQL_USER: Nome de usuário do MySQL.
     MYSQL_ROOT_PASSWORD: Senha do usuário root do MySQL.
   - **`Dockerfile`**: Arquivo para subir a imagem docker.
-  - **`compose.yaml`**: Arquivo para subir os containers.
+  - **`docker-compose.yml`**: Arquivo para subir os containers.
 
 ## Configuração e Execução
 
