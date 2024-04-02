@@ -16,7 +16,7 @@ services:
       - minha-net
 
   server:
-    image: viniciusgggabriel/backend-counter-server:1.0.0
+    image: viniciusgggabriel/backend-counter-server:1.0.1
     # Variáveis de ambiente do .env local para o .env container
     environment:
       - MYSQL_URL=${MYSQL_URL}
