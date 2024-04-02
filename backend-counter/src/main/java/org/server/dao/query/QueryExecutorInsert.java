@@ -1,13 +1,15 @@
-package org.server.model;
+package org.server.dao.query;
+
+import org.server.dao.connection.DatabaseConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class QueryExecutorImpl implements QueryExecutorInsert {
-    private final DatabaseConnection connectionManager;
+public class QueryExecutorInsert implements QueryExecutorInsertFactory {
+    private final DatabaseConnectionFactory connectionManager;
 
-    public QueryExecutorImpl(DatabaseConnection connectionManager) {
+    public QueryExecutorInsert(DatabaseConnectionFactory connectionManager) {
         this.connectionManager = connectionManager;
     }// Pede a conexão do banco de dados como constructor
 

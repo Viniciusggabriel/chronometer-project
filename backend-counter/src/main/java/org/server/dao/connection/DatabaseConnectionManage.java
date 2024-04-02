@@ -1,4 +1,4 @@
-package org.server.model;
+package org.server.dao.connection;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -7,9 +7,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
-public class DatabaseConnectionManage implements DatabaseConnection {
+public class DatabaseConnectionManage implements DatabaseConnectionFactory {
     static Dotenv dotenv = Dotenv.load(); // Carrega as variáveis do .env
     private static final DataSource dataSource;
 

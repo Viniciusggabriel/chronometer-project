@@ -1,13 +1,15 @@
-package org.server.model;
+package org.server.dao.query;
+
+import org.server.dao.connection.DatabaseConnectionFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QueryExecutorSele implements QueryExecutorSelect {
-    private final DatabaseConnection connectionManager; // Não pode ser alterado após inicializado
+public class QueryExecutorSelect implements QueryExecutorSelectFactory{
+    private final DatabaseConnectionFactory connectionManager; // Não pode ser alterado após inicializado
 
-    public QueryExecutorSele(DatabaseConnection connectionManager) {
+    public QueryExecutorSelect(DatabaseConnectionFactory connectionManager) {
         this.connectionManager = connectionManager;
     } // Pede a conexão do banco de dados como constructor
 
