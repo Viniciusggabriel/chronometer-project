@@ -34,15 +34,17 @@ A estrutura do projeto segue um padrão comum de projetos Java, incluindo a orga
 - **`lap-counter-aps`**: Diretório raiz entre o back-end e o front-end.
   - **`backend-counter`**: Diretório contendo o código-fonte do back-end Java.
       - **`src.main.java.org.server`**: Pacote principal do projeto.
-          - **`http.HttpServerManager.java`**: Classe principal do programa, responsável por iniciar a aplicação e subir o servidor http.
+        - **`controller`**: Package para a criação do server http.
+            - **`HttpServerManager.java`**: Classe principal do programa, responsável por iniciar a aplicação e subir o servidor http.
             - **`routes.RouteSelectHandler.java`**: Classe responsável por criar a rota http que busca os últimos valores e retorna eles juntamente a soma.
             - **`routes.RouteSubmitHandler.java`**: Classe responsável por criar a rota http que insere os valores dentro do banco de dados.
-          - **`model.ModelMethods.java`**: Interfaces dos métodos presentes para as classes de conexão com o banco de dados.
-          - **`model.DatabaseConnectionManage.java`**: Classe responsável pelo pool e fechamento da conexão com o MySQL.
-          - **`model.QueryExecutorImpl.java`**: Classe responsável por fazer a implementação de dados por meio de uma procedure.
-          - **`model.QueryExecutorSele.java`**: Classe responsável por fazer select dos dois últimos dados inseridos.
+        - **`dao`**: Package (Data Access Object) contem tudo relacionado ao banco de dados.
+          - **`connection.DatabaseConnectionFactory.java`**: Interfaces dos métodos presentes para as classes de conexão com o banco de dados.
+          - **`connection.DatabaseConnectionManage.java`**: Classe responsável pelo pool e fechamento da conexão com o MySQL.
+          - **`query.QueryExecutorInsert.java`**: Classe responsável por fazer a implementação de dados por meio de uma procedure.
+          - **`query.QueryExecutorSelect.java`**: Classe responsável por fazer select dos dois últimos dados inseridos.
   - **`pom.xml`**: Arquivo de configuração do Maven, onde são definidas as dependências e configurações do projeto.
-  - **`.env`**: Arquivo que contem as variáveis de ambiente do projeto
+  - **`.env`**: Arquivo que contem as variáveis de ambiente do projeto.
     ```
     MYSQL_URL: URL de conexão JDBC para o MySQL.
     MYSQL_DATABASE: Nome do banco de dados MySQL.
