@@ -1,10 +1,10 @@
-package org.server.http.routes;
+package org.server.controller.routes;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.server.model.DatabaseConnectionManage;
-import org.server.model.QueryExecutorSele;
+import org.server.dao.connection.DatabaseConnectionManage;
+import org.server.dao.query.QueryExecutorSelect;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,7 +27,7 @@ public class RouteSelectHandler implements HttpHandler {
         }
 
         DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
-        QueryExecutorSele dataBase = new QueryExecutorSele(connectionManager);
+        QueryExecutorSelect dataBase = new QueryExecutorSelect(connectionManager);
 
         Object[] resultSelectClockFullValues;
         try {

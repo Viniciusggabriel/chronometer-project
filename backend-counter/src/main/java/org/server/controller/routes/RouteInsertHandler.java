@@ -1,16 +1,16 @@
-package org.server.http.routes;
+package org.server.controller.routes;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.server.model.DatabaseConnectionManage;
-import org.server.model.QueryExecutorImpl;
+import org.server.dao.connection.DatabaseConnectionManage;
+import org.server.dao.query.QueryExecutorInsert;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.sql.Time;
 
-public class RouteSubmitHandler implements HttpHandler {
+public class RouteInsertHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
@@ -21,7 +21,6 @@ public class RouteSubmitHandler implements HttpHandler {
             exchange.close();
             return;
         }
-
 
         // Cria um buffer e passa os valores do body
         InputStream requestBody = exchange.getRequestBody();
@@ -41,7 +40,7 @@ public class RouteSubmitHandler implements HttpHandler {
 
         try {
             DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
-            QueryExecutorImpl dataBase = new QueryExecutorImpl(connectionManager);
+            QueryExecutorInsert dataBase = new QueryExecutorInsert(connectionManager);
 
             dataBase.executeInsert("CALL INSERT_DATA_TIME('" + data + "');");
 
@@ -52,7 +51,7 @@ public class RouteSubmitHandler implements HttpHandler {
             outputStream.write(response.getBytes());
             outputStream.close();
         } catch (SQLException error) {
-            // Constroi uma exeção
+            // Constrói uma exceção
             throw new RuntimeException("Erro ao inserir valores dentro do banco de dados: " + error.getMessage());
         }
     }

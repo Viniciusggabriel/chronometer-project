@@ -1,8 +1,8 @@
-package org.server.http;
+package org.server.controller;
 
 import com.sun.net.httpserver.HttpServer;
-import org.server.http.routes.RouteSelectHandler;
-import org.server.http.routes.RouteSubmitHandler;
+import org.server.controller.routes.RouteInsertHandler;
+import org.server.controller.routes.RouteSelectHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -13,7 +13,7 @@ public class HttpServerManager {
 
         // Criando handlers para as rotas
         server.createContext("/", new RouteSelectHandler());
-        server.createContext("/submit", new RouteSubmitHandler());
+        server.createContext("/submit", new RouteInsertHandler());
 
         System.out.println("🔥 Server http rodando");
         server.start();
