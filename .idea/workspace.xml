@@ -5,20 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7ccec845-1af9-49a4-a597-3599a680b7b5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend-counter/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/connection/DatabaseConnectionFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/query/QueryExecutorFactoy.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/http/HttpServerManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/HttpServerManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/http/routes/RouteSelectHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/routes/RouteSelectHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/http/routes/RouteSubmitHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/routes/RouteInsertHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/model/DatabaseConnectionManage.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/connection/DatabaseConnectionManage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/model/ModelMethods.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/model/QueryExecutorImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/query/QueryExecutorInsert.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/model/QueryExecutorSele.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/query/QueryExecutorSelect.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
