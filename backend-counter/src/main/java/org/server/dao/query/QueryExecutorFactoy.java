@@ -1,5 +1,7 @@
 package org.server.dao.query;
 
+import org.server.dao.dto.ErrorResponse;
+
 import java.sql.SQLException;
 
 interface QueryExecutorSelectFactory {
@@ -7,5 +9,5 @@ interface QueryExecutorSelectFactory {
 }
 
 interface QueryExecutorInsertFactory {
-    void executeInsert(String query) throws SQLException;
+    ErrorResponse executeInsert(String query) throws SQLException;
 }
