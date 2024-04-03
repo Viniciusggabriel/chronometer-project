@@ -8,7 +8,6 @@ import org.server.dao.query.QueryExecutorInsert;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.sql.Time;
 
 public class RouteInsertHandler implements HttpHandler {
@@ -40,30 +39,33 @@ public class RouteInsertHandler implements HttpHandler {
                 QueryExecutorInsert queryExecutorInsert = new QueryExecutorInsert(connectionManager);
 
                 ErrorResponse response = queryExecutorInsert.executeInsert("CALL INSERT_DATA_TIME('" + data + "');");
+
                 int statusCode = response.errorCode();
                 String messageCode = response.errorMessage();
 
-                if (statusCode == 201) {
-                    exchange.sendResponseHeaders(201, messageCode.length());
+                exchange.sendResponseHeaders(statusCode, messageCode.length());
 
-                    OutputStream outputStream = exchange.getResponseBody();
-                    outputStream.write(messageCode.getBytes());
-                    outputStream.close();
-                } else {
-                    exchange.sendResponseHeaders(204, messageCode.length());
+                OutputStream outputStream = exchange.getResponseBody();
+                outputStream.write(messageCode.getBytes());
 
-                    OutputStream outputStream = exchange.getResponseBody();
-                    outputStream.write(messageCode.getBytes());
-                    outputStream.close();
-                }
+            } catch (IOException error) {
+                exchange.getResponseHeaders().add("Content-Type", "application/json");
+                exchange.sendResponseHeaders(500, -1);
 
-                //todo: Mudar esse catch
-            } catch (SQLException error) {
-                // Constrói uma exceção
-                throw new RuntimeException("Erro ao inserir valores dentro do banco de dados: " + error.getMessage());
+                OutputStream outputStream = exchange.getResponseBody();
+                outputStream.write(("Não foi possível passar os dados para o Banco de dados" + error).getBytes());
+                outputStream.close();
+
+                exchange.close();
             }
         } else {
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
             exchange.sendResponseHeaders(405, -1);
+
+            OutputStream outputStream = exchange.getResponseBody();
+            outputStream.write("Essa rota permite apenas o método Post".getBytes());
+            outputStream.close();
+
             exchange.close();
         }
     }
