@@ -1,5 +1,6 @@
 package org.server.controller.routes;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.server.controller.services.SumTimesString;
@@ -14,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 
 public class RouteSelectHandler implements HttpHandler, ErrorHttpFactory {
+    private final Gson gson = new Gson();
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -45,8 +48,7 @@ public class RouteSelectHandler implements HttpHandler, ErrorHttpFactory {
                 SumTimesString sumTimesString = new SumTimesString();
 
                 try {
-                    String result = sumTimesString.twoTimeSum(firstLap, secondLap);
-                    sendResponse(exchange, 200, result);
+                    sendResponse(exchange, 200, sumTimesString.twoTimeSum(firstLap, secondLap));
                 } catch (IOException error) {
                     sendResponse(exchange, 102, "Processando");
                 }
@@ -55,11 +57,11 @@ public class RouteSelectHandler implements HttpHandler, ErrorHttpFactory {
             if (resultSelectClock != null) {
                 OperationResult operationResult = resultSelectClock.operationResult();
 
-                // verifica se a resposta de erro é do banco de dados e retorna ela ou retorna o erro do IOException
-                if (operationResult.errorCode() == 500) {
-                    sendErrorResponse(exchange, operationResult.errorMessage());
+                // verifica se a resposta de erro é do banco de dados e retorna ela ou retorna o erro do HTTP
+                if (operationResult.operationCode() == 500) {
+                    sendErrorResponse(exchange, operationResult.operationMessage());
                 } else {
-                    sendErrorResponse(exchange, operationResult.errorMessage() + error.getMessage());
+                    sendErrorResponse(exchange, operationResult.operationMessage() + error.getMessage());
                 }
             } else {
                 // Caso o resultSelectClock
@@ -70,13 +72,22 @@ public class RouteSelectHandler implements HttpHandler, ErrorHttpFactory {
 
     @Override
     public void sendResponse(HttpExchange exchange, int statusCode, String responseMessage) throws IOException {
+        // Configurar o tipo de conteúdo como application/json
         exchange.getResponseHeaders().add("Content-Type", "application/json");
-        exchange.sendResponseHeaders(statusCode, responseMessage.length());
 
-        try (OutputStream outputStream = exchange.getResponseBody()) {
-            outputStream.write(responseMessage.getBytes(StandardCharsets.UTF_8));
+        String jsonResponse = responseMessage;
+
+        if (statusCode != 200) {
+            OperationResult operationResult = new OperationResult(statusCode, responseMessage);
+            jsonResponse = gson.toJson(operationResult);
         }
-        exchange.close();
+
+        // Enviar a resposta no Header da requisição
+        exchange.sendResponseHeaders(statusCode, jsonResponse.length());
+        try (exchange; OutputStream outputStream = exchange.getResponseBody()) {
+            outputStream.write(jsonResponse.getBytes(StandardCharsets.UTF_8));
+        }
+
     }
 
     @Override

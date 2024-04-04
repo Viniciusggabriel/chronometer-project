@@ -1,5 +1,6 @@
 package org.server.controller.routes;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.server.controller.services.BufferedString;
@@ -12,6 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 
 public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
+    private final Gson gson = new Gson();
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -46,7 +49,7 @@ public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
             OperationResult response = queryExecutorInsert.executeInsert("CALL INSERT_DATA_TIME('" + result + "');");
 
             // Enviar o resultado do response, pode ser um erro ou o resultado em si
-            sendResponse(exchange, response.errorCode(), response.errorMessage());
+            sendResponse(exchange, response.operationCode(), response.operationMessage());
         } catch (IOException error) {
             // Envia uma resposta de erro caso o servidor HTTP não consiga enviar dados
             sendErrorResponse(exchange, "Ocorreu um erro ao processar a sua solicitação HTTP: " + error.getMessage());
@@ -55,14 +58,20 @@ public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
 
     @Override
     public void sendResponse(HttpExchange exchange, int statusCode, String responseMessage) throws IOException {
+        // Configurar o tipo de conteúdo como application/json
         exchange.getResponseHeaders().add("Content-Type", "application/json");
-        exchange.sendResponseHeaders(statusCode, responseMessage.length());
 
-        try (OutputStream outputStream = exchange.getResponseBody()) {
-            outputStream.write(responseMessage.getBytes(StandardCharsets.UTF_8));
+        OperationResult operationResult = new OperationResult(statusCode, responseMessage);
+
+        String jsonResponse = gson.toJson(operationResult);
+
+        // Enviar a resposta no Header da requisição
+        exchange.sendResponseHeaders(statusCode, jsonResponse.length());
+        try (exchange; OutputStream outputStream = exchange.getResponseBody()) {
+            outputStream.write(jsonResponse.getBytes(StandardCharsets.UTF_8));
         }
-        exchange.close();
     }
+
 
     @Override
     public void sendErrorResponse(HttpExchange exchange, String errorMessage) throws IOException {
