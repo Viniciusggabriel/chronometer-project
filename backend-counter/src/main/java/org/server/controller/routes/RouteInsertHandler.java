@@ -2,71 +2,70 @@ package org.server.controller.routes;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.server.controller.services.BufferedString;
 import org.server.dao.connection.DatabaseConnectionManage;
-import org.server.dao.dto.ErrorResponse;
+import org.server.dao.dto.OperationResult;
 import org.server.dao.query.QueryExecutorInsert;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 
-public class RouteInsertHandler implements HttpHandler {
+public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        // Se o método for diferente de POST manda erro
-        if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
 
-            // Cria um buffer e passa os valores do body
-            InputStream requestBody = exchange.getRequestBody();
+        /*
+         * Verifica se o método é POST
+         * Tenta ler o corpo da requisição e criar um buffer, instancia uma classe passando o buffer o retorno da classe é passado como parâmetro a query insert
+         * Usa o método sendResponse para mandar o erro da classe QueryExecutorInsert ou a mensagem de sucesso
+         * Trata um erro com a solicitação HTTP
+         * */
 
-            InputStreamReader inputStreamReader = new InputStreamReader(requestBody, StandardCharsets.UTF_8);
+        if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+            sendResponse(exchange, 405, "Essa rota permite apenas o método POST");
+            return;
+        }
 
-            BufferedReader bufferReader = new BufferedReader(inputStreamReader);
-            StringBuilder bodyBuilder = new StringBuilder(); // Cria um stringBuilder
+        try (InputStream requestBody = exchange.getRequestBody(); InputStreamReader inputStreamReader = new InputStreamReader(requestBody, StandardCharsets.UTF_8); BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 
-            // Passa os valores do buffer para o line e faz um loop passando os valores da line para a stringBuilder
-            String line;
-            while ((line = bufferReader.readLine()) != null) {
-                bodyBuilder.append(line);
-            }
-
-            String requestBodyString = bodyBuilder.toString();
-
-            Time data = Time.valueOf(requestBodyString);
+            Time result;
 
             try {
-                DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
-                QueryExecutorInsert queryExecutorInsert = new QueryExecutorInsert(connectionManager);
-
-                ErrorResponse response = queryExecutorInsert.executeInsert("CALL INSERT_DATA_TIME('" + data + "');");
-
-                int statusCode = response.errorCode();
-                String messageCode = response.errorMessage();
-
-                exchange.sendResponseHeaders(statusCode, messageCode.length());
-
-                OutputStream outputStream = exchange.getResponseBody();
-                outputStream.write(messageCode.getBytes());
+                BufferedString bufferedString = new BufferedString();
+                result = bufferedString.bufferedTime(bufferedReader);
 
             } catch (IOException error) {
-                exchange.getResponseHeaders().add("Content-Type", "application/json");
-                exchange.sendResponseHeaders(500, -1);
-
-                OutputStream outputStream = exchange.getResponseBody();
-                outputStream.write(("Não foi possível passar os dados para o Banco de dados" + error).getBytes());
-                outputStream.close();
-
-                exchange.close();
+                sendResponse(exchange, 102, "Erro ao ler corpo da requisição" + error.getMessage());
+                return;
             }
-        } else {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
-            exchange.sendResponseHeaders(405, -1);
 
-            OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write("Essa rota permite apenas o método Post".getBytes());
-            outputStream.close();
+            DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
+            QueryExecutorInsert queryExecutorInsert = new QueryExecutorInsert(connectionManager);
 
-            exchange.close();
+            OperationResult response = queryExecutorInsert.executeInsert("CALL INSERT_DATA_TIME('" + result + "');");
+
+            // Enviar o resultado do response, pode ser um erro ou o resultado em si
+            sendResponse(exchange, response.errorCode(), response.errorMessage());
+        } catch (IOException error) {
+            // Envia uma resposta de erro caso o servidor HTTP não consiga enviar dados
+            sendErrorResponse(exchange, "Ocorreu um erro ao processar a sua solicitação HTTP: " + error.getMessage());
         }
+    }
+
+    @Override
+    public void sendResponse(HttpExchange exchange, int statusCode, String responseMessage) throws IOException {
+        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.sendResponseHeaders(statusCode, responseMessage.length());
+
+        try (OutputStream outputStream = exchange.getResponseBody()) {
+            outputStream.write(responseMessage.getBytes(StandardCharsets.UTF_8));
+        }
+        exchange.close();
+    }
+
+    @Override
+    public void sendErrorResponse(HttpExchange exchange, String errorMessage) throws IOException {
+        sendResponse(exchange, 500, errorMessage);
     }
 }
