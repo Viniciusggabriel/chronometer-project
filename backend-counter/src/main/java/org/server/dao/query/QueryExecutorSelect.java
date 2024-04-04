@@ -1,8 +1,9 @@
 package org.server.dao.query;
 
 import org.server.dao.connection.DatabaseConnectionFactory;
-import org.server.dao.dto.ErrorResponse;
-import org.server.dao.dto.ResultSelect;
+import org.server.dao.dto.SelectResponseOperation;
+import org.server.dao.dto.OperationResult;
+import org.server.dao.dto.OperationResponse;
 
 import java.io.IOException;
 import java.sql.*;
@@ -19,31 +20,38 @@ public class QueryExecutorSelect implements QueryExecutorSelectFactory {
     } // Pede a conexão do banco de dados como constructor
 
     @Override
-    public Object[] executeQuery(String query, String valueColumn) throws IOException {
-        List<Time> resultList = new ArrayList<>(); // Uma list de Time
-        List<ErrorResponse> errorResponseList = new ArrayList<>(); // Transforma o erro em uma lista
+    public SelectResponseOperation executeQuery(String query, String valueColumn) throws IOException {
 
-        // Tenta a conexão com banco de dados
+        /* Info: tratamento de erros
+         * Cria uma lista para os resultados
+         * Tratamento de erros caso a conexão não execute
+         * Tratamento de erros caso o statement não execute de forma certa ou os dados foram recebidos de forma errada
+         * Imprime no console a gravidade do erro, mensagem personalizada + erro
+         * Retorna um státus para o http e uma mensagem de erro ou sucesso
+         * */
+
+        List<Time> resultList = new ArrayList<>();
+
         try (Connection connection = connectionManager.getConnection()) {
-            // Tenta criar o cursor dentro do banco de dados e executar a query
             try (PreparedStatement statement = connection.prepareStatement(query);
                  ResultSet resultSet = statement.executeQuery()) {
 
+                // Adiciona dentro da lista de objetos os resultados
                 while (resultSet.next()) {
                     Time valuesResult = resultSet.getTime(valueColumn);
-                    resultList.add(valuesResult); // Adiciona dentro da lista de objetos o resultado
+                    resultList.add(valuesResult);
                 }
 
-                ResultSelect resultSelect = new ResultSelect(resultList.toArray());
-                return resultSelect.resultSelect();
+                OperationResponse operationResponse = new OperationResponse(resultList.toArray());
+
+                return new SelectResponseOperation(operationResponse, null);
             } catch (SQLException error) {
                 Logger logger = Logger.getLogger(SQLException.class.getName());
-                logger.log(Level.INFO, "Erro ao preparar cursor no banco de dados: " + error);
+                logger.log(Level.INFO, "Erro ao preparar statement no banco de dados: " + error);
 
-                ErrorResponse errorResponse = new ErrorResponse(500, "Erro ao buscar informações dentro do banco de dados, tente novamente ou entre em contato com o suporte");
+                OperationResult operationResult = new OperationResult(500, "Erro ao buscar informações dentro do banco de dados, tente novamente ou entre em contato com o suporte");
 
-                errorResponseList.add(errorResponse);
-                return errorResponseList.toArray(); // Transforma a lista de erro em um array
+                return new SelectResponseOperation(null, operationResult);
             } finally {
                 connectionManager.closeConnection(connection);
             }
@@ -51,10 +59,9 @@ public class QueryExecutorSelect implements QueryExecutorSelectFactory {
             Logger logger = Logger.getLogger(SQLException.class.getName());
             logger.log(Level.INFO, "Erro ao prepara conexão no banco de dados: " + error);
 
-            ErrorResponse errorResponse = new ErrorResponse(500, "Erro ao prepara conexão no banco de dados entre em contato com o suporte");
+            OperationResult operationResult = new OperationResult(500, "Erro ao prepara conexão no banco de dados entre em contato com o suporte");
 
-            errorResponseList.add(errorResponse);
-            return errorResponseList.toArray(); // Transforma a lista de erro em um array
+            return new SelectResponseOperation(null, operationResult);
         }
     }
 }

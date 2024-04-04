@@ -1,14 +1,14 @@
 package org.server.dao.query;
 
-import org.server.dao.dto.ErrorResponse;
+import org.server.dao.dto.SelectResponseOperation;
+import org.server.dao.dto.OperationResult;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 interface QueryExecutorSelectFactory {
-    Object[] executeQuery(String query, String valueColumn) throws IOException;
+    SelectResponseOperation executeQuery(String query, String valueColumn) throws IOException;
 }
 
 interface QueryExecutorInsertFactory {
-    ErrorResponse executeInsert(String query) throws IOException;
+    OperationResult executeInsert(String query) throws IOException;
 }

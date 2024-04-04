@@ -1,96 +1,86 @@
 package org.server.controller.routes;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.server.controller.services.SumTimesString;
 import org.server.dao.connection.DatabaseConnectionManage;
-import org.server.dao.dto.ResultSelect;
+import org.server.dao.dto.SelectResponseOperation;
+import org.server.dao.dto.OperationResult;
 import org.server.dao.query.QueryExecutorSelect;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.SQLException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Time;
-import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
 
-public class RouteSelectHandler implements HttpHandler {
+public class RouteSelectHandler implements HttpHandler, ErrorHttpFactory {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        // Se o metodo for diferente de GET manda erro
-        if (exchange.getRequestMethod().equalsIgnoreCase("GET")) {
-            Object[] resultSelectClockFullValues;
 
-            try {
-                DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
-                QueryExecutorSelect dataBase = new QueryExecutorSelect(connectionManager);
+        /*
+         * Verifica se o método é GET
+         * Inicia uma variável do tipo SelectResponseOperation que é um record que recebe e retorna outros dois records
+         * Verifica se o resultado é = 0 e retorna erro ou o resultado
+         * Usa um service que faz a soma dos dois valores obtidos, se for erro entra no catch
+         * verifica se a resposta é um erro do banco ou HTTP e retorna esse erro
+         * */
 
-                resultSelectClockFullValues = dataBase.executeQuery("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 2", "TIME_LAP");
-
-                if (resultSelectClockFullValues.length == 0) {
-                    exchange.sendResponseHeaders(404, 0);
-
-                    OutputStream outputStream = exchange.getResponseBody();
-                    outputStream.write("Sem dados dentro do banco".getBytes());
-
-                    outputStream.close();
-                    exchange.close();
-                } else {
-                    Time firstValue = (Time) resultSelectClockFullValues[1];
-                    Time penultimateValue = (Time) resultSelectClockFullValues[0];
-
-                    int hoursSelect = firstValue.getHours() + penultimateValue.getHours();
-                    int minutesSelect = firstValue.getMinutes() + penultimateValue.getMinutes();
-                    int secondsSelect = firstValue.getSeconds() + penultimateValue.getSeconds();
-
-                    if (secondsSelect >= 60) {
-                        minutesSelect += secondsSelect / 60;
-                        secondsSelect %= 60;
-                    }
-
-                    if (minutesSelect > 59) {
-                        hoursSelect += minutesSelect / 60;
-                        minutesSelect %= 60;
-                    }
-
-                    LocalTime totalTime = LocalTime.of(hoursSelect, minutesSelect, secondsSelect);
-
-                    Map<String, Object> responseData = new HashMap<>();
-
-                    responseData.put("primeira_volta", firstValue.toString());
-                    responseData.put("segunda_volta", penultimateValue.toString());
-                    responseData.put("total_voltas", totalTime.toString());
-
-                    Gson gson = new Gson();
-                    String jsonResponse = gson.toJson(responseData);
-
-                    exchange.getResponseHeaders().add("Content-Type", "application/json");
-                    exchange.sendResponseHeaders(200, jsonResponse.length());
-
-                    OutputStream outputStream = exchange.getResponseBody();
-                    outputStream.write(jsonResponse.getBytes());
-                    outputStream.close();
-                }
-            } catch (IOException error) {
-                exchange.sendResponseHeaders(404, 0);
-
-                OutputStream outputStream = exchange.getResponseBody();
-                outputStream.write("Erro ao buscar dados dentro do banco, tente novamente ou entre em contato com o suporte".getBytes());
-
-                outputStream.close();
-                exchange.close();
-            }
-
-        } else {
-            exchange.sendResponseHeaders(405, -1);
-            exchange.close();
-
-            OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write("Essa rota permite apenas o método Get".getBytes());
-
-            outputStream.close();
-            exchange.close();
+        if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
+            sendResponse(exchange, 405, "Essa rota permite apenas o método GET");
         }
+
+        SelectResponseOperation resultSelectClock = null;
+        try {
+            DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
+            QueryExecutorSelect dataBase = new QueryExecutorSelect(connectionManager);
+
+            resultSelectClock = dataBase.executeQuery("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 2", "TIME_LAP");
+
+            if (resultSelectClock.selectResponse().resultSelect().length == 0) {
+                sendErrorResponse(exchange, "Requisição tem tamanho zero");
+            } else {
+                Time firstLap = (Time) resultSelectClock.selectResponse().resultSelect()[1];
+                Time secondLap = (Time) resultSelectClock.selectResponse().resultSelect()[0];
+
+                SumTimesString sumTimesString = new SumTimesString();
+
+                try {
+                    String result = sumTimesString.twoTimeSum(firstLap, secondLap);
+                    sendResponse(exchange, 200, result);
+                } catch (IOException error) {
+                    sendResponse(exchange, 102, "Processando");
+                }
+            }
+        } catch (IOException error) {
+            if (resultSelectClock != null) {
+                OperationResult operationResult = resultSelectClock.operationResult();
+
+                // verifica se a resposta de erro é do banco de dados e retorna ela ou retorna o erro do IOException
+                if (operationResult.errorCode() == 500) {
+                    sendErrorResponse(exchange, operationResult.errorMessage());
+                } else {
+                    sendErrorResponse(exchange, operationResult.errorMessage() + error.getMessage());
+                }
+            } else {
+                // Caso o resultSelectClock
+                sendErrorResponse(exchange, "Erro interno no servidor");
+            }
+        }
+    }
+
+    @Override
+    public void sendResponse(HttpExchange exchange, int statusCode, String responseMessage) throws IOException {
+        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.sendResponseHeaders(statusCode, responseMessage.length());
+
+        try (OutputStream outputStream = exchange.getResponseBody()) {
+            outputStream.write(responseMessage.getBytes(StandardCharsets.UTF_8));
+        }
+        exchange.close();
+    }
+
+    @Override
+    public void sendErrorResponse(HttpExchange exchange, String errorMessage) throws IOException {
+        sendResponse(exchange, 500, errorMessage);
     }
 }

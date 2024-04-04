@@ -1,7 +1,7 @@
 package org.server.dao.query;
 
 import org.server.dao.connection.DatabaseConnectionFactory;
-import org.server.dao.dto.ErrorResponse;
+import org.server.dao.dto.OperationResult;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -19,24 +19,24 @@ public class QueryExecutorInsert implements QueryExecutorInsertFactory {
     }
 
     @Override
-    public ErrorResponse executeInsert(String query) throws IOException {
+    public OperationResult executeInsert(String query) throws IOException {
 
         /* Info: tratamento de erros
-         * Tratamento de erros caso o statement/conexão não execute ou o valor inserido não condiz com o SQL
-         * Retorna um erro com o nome do arquivo e outros dados importantes
-         * Retorna a gravidade do erro, mensagem personalizada + erro em si
-         * Retorna um státus para o http e uma mensagem
+         * Tratamento de erros caso a conexão não execute
+         * Tratamento de erros caso o statement não execute de forma certa ou os dados foram inseridos errados
+         * Imprime no console a gravidade do erro, mensagem personalizada + erro
+         * Retorna um státus para o http e uma mensagem de erro ou sucesso
          * */
 
         try (Connection connection = connectionManager.getConnection()) {
             try (Statement statement = connection.createStatement()) {
                 statement.executeUpdate(query);
-                return new ErrorResponse(201, "Dado criado dentro do banco de dados");
+                return new OperationResult(201, "Criado com sucesso");
             } catch (SQLException error) {
                 Logger logger = Logger.getLogger(SQLException.class.getName());
-                logger.log(Level.INFO, "Erro ao preparar o statement dentro do banco de dados: " + error);
+                logger.log(Level.INFO, "Erro ao preparar o statement dentro do banco de dados, ou dados inseridos de forma errada: " + error);
 
-                return new ErrorResponse(500, "Erro ao inserir seus dados, verifique novamente se segue o padrão 00:00:00");
+                return new OperationResult(500, "Erro ao inserir seus dados, verifique novamente se segue o padrão 00:00:00");
             } finally {
                 connectionManager.closeConnection(connection);
             }
@@ -44,7 +44,7 @@ public class QueryExecutorInsert implements QueryExecutorInsertFactory {
             Logger logger = Logger.getLogger(SQLException.class.getName());
             logger.log(Level.INFO, "Erro ao prepara conexão no banco de dados: " + error);
 
-            return new ErrorResponse(500, "Erro ao prepara conexão no banco de dados entre em contato com o suporte");
+            return new OperationResult(500, "Erro ao prepara conexão no banco de dados entre em contato com o suporte");
         }
     }
 }
