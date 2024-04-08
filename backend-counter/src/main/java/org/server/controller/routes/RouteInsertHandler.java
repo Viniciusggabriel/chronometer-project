@@ -37,7 +37,6 @@ public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
             try {
                 BufferedString bufferedString = new BufferedString();
                 result = bufferedString.bufferedTime(bufferedReader);
-
             } catch (IOException error) {
                 sendResponse(exchange, 102, "Erro ao ler corpo da requisição" + error.getMessage());
                 return;
