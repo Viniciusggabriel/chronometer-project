@@ -3,10 +3,10 @@ package org.server.controller.routes;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.server.controller.services.SumTimesString;
+import org.server.services.SumTimesString;
 import org.server.dao.connection.DatabaseConnectionManage;
-import org.server.dao.dto.SelectResponseOperation;
-import org.server.dao.dto.OperationResult;
+import org.server.dto.SelectResponseOperation;
+import org.server.dto.OperationResult;
 import org.server.dao.query.QueryExecutorSelect;
 
 import java.io.IOException;

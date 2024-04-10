@@ -3,10 +3,11 @@ package org.server.controller.routes;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.server.controller.services.BufferedString;
+import org.server.services.BufferedString;
 import org.server.dao.connection.DatabaseConnectionManage;
-import org.server.dao.dto.OperationResult;
+import org.server.dto.OperationResult;
 import org.server.dao.query.QueryExecutorInsert;
+import org.server.services.CustomTimer;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -32,11 +33,11 @@ public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
 
         try (InputStream requestBody = exchange.getRequestBody(); InputStreamReader inputStreamReader = new InputStreamReader(requestBody, StandardCharsets.UTF_8); BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 
-            Time result;
+            CustomTimer result;
 
             try {
                 BufferedString bufferedString = new BufferedString();
-                result = bufferedString.bufferedTime(bufferedReader);
+                result = bufferedString.bufferedTimeAndMilliseconds(bufferedReader);
             } catch (IOException error) {
                 sendResponse(exchange, 102, "Erro ao ler corpo da requisição" + error.getMessage());
                 return;
@@ -45,7 +46,13 @@ public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
             DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
             QueryExecutorInsert queryExecutorInsert = new QueryExecutorInsert(connectionManager);
 
-            OperationResult response = queryExecutorInsert.executeInsert("CALL INSERT_DATA_TIME('" + result + "');");
+            Time resultTime = result.time();
+            int resultMilliseconds = (int) result.milliseconds();
+
+            System.out.println(resultTime);
+            System.out.println(resultMilliseconds);
+
+            OperationResult response = queryExecutorInsert.executeInsert("CALL INSERT_DATA_TIME('" + resultTime + "'," + resultMilliseconds + ");");
 
             // Enviar o resultado do response, pode ser um erro ou o resultado em si
             sendResponse(exchange, response.operationCode(), response.operationMessage());

@@ -1,9 +1,9 @@
 package org.server.dao.query;
 
 import org.server.dao.connection.DatabaseConnectionFactory;
-import org.server.dao.dto.SelectResponseOperation;
-import org.server.dao.dto.OperationResult;
-import org.server.dao.dto.OperationResponse;
+import org.server.dto.SelectResponseOperation;
+import org.server.dto.OperationResult;
+import org.server.dto.OperationResponse;
 
 import java.io.IOException;
 import java.sql.*;

@@ -1,7 +1,7 @@
 package org.server.dao.query;
 
-import org.server.dao.dto.SelectResponseOperation;
-import org.server.dao.dto.OperationResult;
+import org.server.dto.SelectResponseOperation;
+import org.server.dto.OperationResult;
 
 import java.io.IOException;
 

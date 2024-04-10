@@ -1,4 +1,4 @@
-package org.server.controller.services;
+package org.server.services;
 
 import com.google.gson.Gson;
 

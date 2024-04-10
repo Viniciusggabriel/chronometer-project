@@ -1,7 +1,7 @@
 package org.server.dao.query;
 
 import org.server.dao.connection.DatabaseConnectionFactory;
-import org.server.dao.dto.OperationResult;
+import org.server.dto.OperationResult;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -36,7 +36,7 @@ public class QueryExecutorInsert implements QueryExecutorInsertFactory {
                 Logger logger = Logger.getLogger(SQLException.class.getName());
                 logger.log(Level.INFO, "Erro ao preparar o statement dentro do banco de dados, ou dados inseridos de forma errada: " + error);
 
-                return new OperationResult(500, "Erro ao inserir seus dados, verifique novamente se segue o padrão 00:00:00");
+                return new OperationResult(500, "Erro ao inserir seus dados, verifique novamente se segue o padrão 00:00:000");
             } finally {
                 connectionManager.closeConnection(connection);
             }

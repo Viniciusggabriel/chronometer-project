@@ -1,11 +1,12 @@
-package org.server.controller.services;
+package org.server.services;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Time;
 
 interface CreateBufferedTime {
-    Time bufferedTime(BufferedReader bufferedReader) throws IOException;
+    CustomTimer parseJson(String jsonString);
+    CustomTimer bufferedTimeAndMilliseconds(BufferedReader bufferedReader) throws IOException;
 }
 
 interface GetTwoTimesSum {

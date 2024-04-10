@@ -4,7 +4,33 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7ccec845-1af9-49a4-a597-3599a680b7b5" name="Changes" comment="" />
+    <list default="true" id="7ccec845-1af9-49a4-a597-3599a680b7b5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/services/CustomTimer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend-counter/src/main/java/view/window/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend-counter/src/main/java/view/window/events/ButtonsEvents.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend-counter/src/main/java/view/window/events/ButtonsEventsFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend-counter/src/main/java/view/window/layout/Layout.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend-counter/src/main/java/view/window/layout/LayoutFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/routes/RouteInsertHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/routes/RouteInsertHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/routes/RouteSelectHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/routes/RouteSelectHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/services/BufferedString.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/services/BufferedString.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/services/ServicesMethodsFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/services/ServicesMethodsFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/controller/services/SumTimesString.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/services/SumTimesString.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/dto/OperationResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dto/OperationResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/dto/OperationResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dto/OperationResult.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/dto/SelectResponseOperation.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dto/SelectResponseOperation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/query/QueryExecutorFactoy.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/query/QueryExecutorFactoy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/query/QueryExecutorInsert.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/query/QueryExecutorInsert.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/query/QueryExecutorSelect.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/main/java/org/server/dao/query/QueryExecutorSelect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-counter/src/sql/scripts.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend-counter/src/sql/scripts.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-counter/src/main/java/view/client/routes/PostClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/frontend-counter/src/main/java/view/client/routes/PostClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-counter/src/main/java/view/ui/MainFrame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-counter/src/main/java/view/ui/frame/Layout.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-counter/src/main/java/view/ui/frame/Layout.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-counter/src/main/java/view/ui/service/HttpClientFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-counter/src/main/java/view/ui/service/HttpGetClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend-counter/src/main/java/view/ui/service/HttpPostClient.java" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
