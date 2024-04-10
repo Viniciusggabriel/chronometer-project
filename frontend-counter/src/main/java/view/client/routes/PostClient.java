@@ -21,13 +21,15 @@ public class PostClient implements ClientPost {
     public OperationPostClientResult clientPostHandler(String data) throws IOException {
         try {
             HttpURLConnection urlConnection = clientConnectionFactoryManage.getConnection("http://localhost:8080/submit", "POST");
+            urlConnection.setDoOutput(true);
 
             // Escreve os dados no corpo da solicitação
             try (OutputStream outputStream = urlConnection.getOutputStream()) {
                 byte[] postDataBytes = data.getBytes(StandardCharsets.UTF_8);
                 outputStream.write(postDataBytes);
             } catch (IOException error) {
-                new OperationResult(400, "Erro ao inserir dados dentro da requisição: " + error);
+                OperationResult operationResult = new OperationResult(400, "Erro ao inserir dados dentro da requisição: " + error);
+                return new OperationPostClientResult(null, operationResult);
             }
 
             // Verifica o código de resposta
