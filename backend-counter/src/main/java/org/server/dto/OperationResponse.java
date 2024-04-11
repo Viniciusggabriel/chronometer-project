@@ -1,4 +1,7 @@
 package org.server.dto;
 
-public record OperationResponse(Object[] resultSelect) {
+import java.sql.Time;
+import java.util.List;
+
+public record OperationResponse(List<Time> resultTime, List<Long> resultMilliseconds) {
 }

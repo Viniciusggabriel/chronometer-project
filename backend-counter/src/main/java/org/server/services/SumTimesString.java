@@ -28,6 +28,7 @@ public class SumTimesString implements GetTwoTimesSum {
         LocalTime totalTime = LocalTime.of(hoursSelect, minutesSelect, secondsSelect);
 
         Map<String, Object> responseData = new HashMap<>();
+        System.out.println(responseData);
 
         responseData.put("primeira_volta", firstTime.toString());
         responseData.put("segunda_volta", secondTime.toString());

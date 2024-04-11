@@ -9,10 +9,13 @@ import org.server.dto.SelectResponseOperation;
 import org.server.dto.OperationResult;
 import org.server.dao.query.QueryExecutorSelect;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Time;
+import java.util.Arrays;
+import java.util.List;
 
 public class RouteSelectHandler implements HttpHandler, ErrorHttpFactory {
     private final Gson gson = new Gson();
@@ -32,30 +35,46 @@ public class RouteSelectHandler implements HttpHandler, ErrorHttpFactory {
             sendResponse(exchange, 405, "Essa rota permite apenas o método GET");
         }
 
-        SelectResponseOperation resultSelectClock = null;
+        SelectResponseOperation responseQuery = null;
         try {
             DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
             QueryExecutorSelect dataBase = new QueryExecutorSelect(connectionManager);
 
-            resultSelectClock = dataBase.executeQuery("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 2", "TIME_LAP");
+            responseQuery = dataBase.executeQuery("SELECT * FROM TIME_CLOCK ORDER BY ID_TIME DESC LIMIT 2", "TIME_LAP", "TIME_MILLISECONDS");
 
-            if (resultSelectClock.selectResponse().resultSelect().length == 0) {
-                sendErrorResponse(exchange, "Requisição tem tamanho zero");
-            } else {
-                Time firstLap = (Time) resultSelectClock.selectResponse().resultSelect()[1];
-                Time secondLap = (Time) resultSelectClock.selectResponse().resultSelect()[0];
+            // Verificar se a resposta não é nula
+            if (responseQuery.selectResponse() != null) {
+                List<Time> resultTimeList = responseQuery.selectResponse().resultTime();
+                List<Long> resultMillisecondsList = responseQuery.selectResponse().resultMilliseconds();
 
-                SumTimesString sumTimesString = new SumTimesString();
+                // Verificar se as listas não são nulas e têm o mesmo tamanho
+                if (resultTimeList != null && resultMillisecondsList != null && resultTimeList.size() == resultMillisecondsList.size()) {
 
-                try {
-                    sendResponse(exchange, 200, sumTimesString.twoTimeSum(firstLap, secondLap));
-                } catch (IOException error) {
-                    sendResponse(exchange, 102, "Processando");
+                    Time firstTime = resultTimeList.get(0);
+                    Time secondTime = resultTimeList.get(1);
+                    
+                    // Todo: fazer a soma de milissegundos
+                    Long firstMilliseconds = resultMillisecondsList.get(0);
+                    Long secondMilliseconds = resultMillisecondsList.get(1);
+
+
+                    SumTimesString sumTimesString = new SumTimesString();
+
+                    try {
+                        sendResponse(exchange, 200, sumTimesString.twoTimeSum(firstTime, secondTime));
+                    } catch (IOException error) {
+                        sendResponse(exchange, 102, "Processando");
+                    }
+                } else {
+                    // Caso as listas forem nulas
+                    sendErrorResponse(exchange, "Listas de valores vazias ou de tamanhos diferentes");
                 }
+            } else {
+                sendErrorResponse(exchange, "Requisição vazia");
             }
         } catch (IOException error) {
-            if (resultSelectClock != null) {
-                OperationResult operationResult = resultSelectClock.operationResult();
+            if (responseQuery != null) {
+                OperationResult operationResult = responseQuery.operationResult();
 
                 // verifica se a resposta de erro é do banco de dados e retorna ela ou retorna o erro do HTTP
                 if (operationResult.operationCode() == 500) {
@@ -64,7 +83,7 @@ public class RouteSelectHandler implements HttpHandler, ErrorHttpFactory {
                     sendErrorResponse(exchange, operationResult.operationMessage() + error.getMessage());
                 }
             } else {
-                // Caso o resultSelectClock
+                // Caso o resultSelectTimer
                 sendErrorResponse(exchange, "Erro interno no servidor");
             }
         }

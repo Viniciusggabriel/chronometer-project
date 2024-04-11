@@ -1,6 +1,4 @@
 package org.server.services;
 
-import java.sql.Time;
-
-public record CustomTimer(Time time, long milliseconds) {
+public record CustomTimer(String time, long milliseconds) {
 }

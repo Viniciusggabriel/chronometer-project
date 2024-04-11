@@ -24,7 +24,8 @@ public class BufferedString implements CreateBufferedTime {
         }
 
         String jsonContent = stringBuilder.toString();
-
-        return parseJson(jsonContent);
+        CustomTimer customTimer = parseJson(jsonContent);
+        System.out.println(customTimer);
+        return customTimer;
     }
 }

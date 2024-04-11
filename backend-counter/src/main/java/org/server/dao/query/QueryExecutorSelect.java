@@ -8,6 +8,7 @@ import org.server.dto.OperationResponse;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,12 +16,13 @@ import java.util.logging.Logger;
 public class QueryExecutorSelect implements QueryExecutorSelectFactory {
     private final DatabaseConnectionFactory connectionManager; // Não pode ser alterado após inicializado
 
+    // Pede a conexão do banco de dados como constructor
     public QueryExecutorSelect(DatabaseConnectionFactory connectionManager) {
         this.connectionManager = connectionManager;
-    } // Pede a conexão do banco de dados como constructor
+    }
 
     @Override
-    public SelectResponseOperation executeQuery(String query, String valueColumn) throws IOException {
+    public SelectResponseOperation executeQuery(String query, String columnTime, String columnLong) throws IOException {
 
         /* Info: tratamento de erros
          * Cria uma lista para os resultados
@@ -30,19 +32,27 @@ public class QueryExecutorSelect implements QueryExecutorSelectFactory {
          * Retorna um státus para o http e uma mensagem de erro ou sucesso
          * */
 
-        List<Time> resultList = new ArrayList<>();
+        List<Time> resultTime = new ArrayList<>();
+        List<Long> resultMilliseconds = new ArrayList<>();
 
         try (Connection connection = connectionManager.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(query);
                  ResultSet resultSet = statement.executeQuery()) {
 
-                // Adiciona dentro da lista de objetos os resultados
+                Time valuesResultTime;
+                long valuesResultMilliseconds;
+
+
+                // Dentro do bloco try onde você está populando os resultados
                 while (resultSet.next()) {
-                    Time valuesResult = resultSet.getTime(valueColumn);
-                    resultList.add(valuesResult);
+                    valuesResultTime = resultSet.getTime(columnTime);
+                    valuesResultMilliseconds = resultSet.getLong(columnLong);
+
+                    resultTime.add(valuesResultTime);
+                    resultMilliseconds.add(valuesResultMilliseconds);
                 }
 
-                OperationResponse operationResponse = new OperationResponse(resultList.toArray());
+                OperationResponse operationResponse = new OperationResponse(resultTime,  resultMilliseconds);
 
                 return new SelectResponseOperation(operationResponse, null);
             } catch (SQLException error) {
@@ -57,9 +67,9 @@ public class QueryExecutorSelect implements QueryExecutorSelectFactory {
             }
         } catch (SQLException error) {
             Logger logger = Logger.getLogger(SQLException.class.getName());
-            logger.log(Level.INFO, "Erro ao prepara conexão no banco de dados: " + error);
+            logger.log(Level.INFO, "Erro ao preparar conexão no banco de dados: " + error);
 
-            OperationResult operationResult = new OperationResult(500, "Erro ao prepara conexão no banco de dados entre em contato com o suporte");
+            OperationResult operationResult = new OperationResult(500, "Erro ao preparar conexão no banco de dados entre em contato com o suporte");
 
             return new SelectResponseOperation(null, operationResult);
         }

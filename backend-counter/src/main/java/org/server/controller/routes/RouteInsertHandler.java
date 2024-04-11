@@ -11,7 +11,6 @@ import org.server.services.CustomTimer;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.sql.Time;
 
 public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
     private final Gson gson = new Gson();
@@ -31,7 +30,9 @@ public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
             return;
         }
 
-        try (InputStream requestBody = exchange.getRequestBody(); InputStreamReader inputStreamReader = new InputStreamReader(requestBody, StandardCharsets.UTF_8); BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+        try (InputStream requestBody = exchange.getRequestBody();
+             InputStreamReader inputStreamReader = new InputStreamReader(requestBody, StandardCharsets.UTF_8);
+             BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 
             CustomTimer result;
 
@@ -39,18 +40,16 @@ public class RouteInsertHandler implements HttpHandler, ErrorHttpFactory {
                 BufferedString bufferedString = new BufferedString();
                 result = bufferedString.bufferedTimeAndMilliseconds(bufferedReader);
             } catch (IOException error) {
-                sendResponse(exchange, 102, "Erro ao ler corpo da requisição" + error.getMessage());
+                sendResponse(exchange, 102, "Erro ao ler corpo da requisição: " + error.getMessage());
                 return;
             }
 
             DatabaseConnectionManage connectionManager = new DatabaseConnectionManage();
             QueryExecutorInsert queryExecutorInsert = new QueryExecutorInsert(connectionManager);
 
-            Time resultTime = result.time();
-            int resultMilliseconds = (int) result.milliseconds();
-
-            System.out.println(resultTime);
-            System.out.println(resultMilliseconds);
+            // Pega os valores do json
+            String resultTime = result.time();
+            long resultMilliseconds = result.milliseconds();
 
             OperationResult response = queryExecutorInsert.executeInsert("CALL INSERT_DATA_TIME('" + resultTime + "'," + resultMilliseconds + ");");
 
