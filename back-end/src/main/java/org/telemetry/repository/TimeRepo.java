@@ -28,12 +28,16 @@ public class TimeRepo {
 
     // Pega um time
     public TimeEntity getTime(TimeEntity time, int indexTime) throws SQLException, IOException {
+        try {
+            List<TimeEntity> times = methodSelect.executeQuery(time);
 
-        List<TimeEntity> times = methodSelect.executeQuery(time);
-        if (!times.isEmpty()) {
-            return times.get(indexTime); // Todo: retornar um array com os dois últimos valores
-        } else {
-            return null;
+            if (!times.isEmpty()) {
+                return times.get(indexTime);
+            } else {
+                throw new RuntimeException("Erro, o banco de dados possui valores vazios");
+            }
+        } catch (SQLException | IOException error) {
+            throw new RuntimeException("Erro ao buscar dados dentro do banco" + error);
         }
     }
 

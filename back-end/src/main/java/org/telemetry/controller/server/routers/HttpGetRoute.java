@@ -40,7 +40,7 @@ public class HttpGetRoute implements HttpRoutesFactory, HttpHandler {
             String jsonResponse = gson.toJson(jsonObject);
 
             sendResponse(exchange, 200, jsonResponse);
-        } catch (Exception error) {
+        } catch (IOException error) {
             sendErrorResponse(exchange, "Ouve um erro interno no servidor: " + error);
         }
     }
