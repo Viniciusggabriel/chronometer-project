@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  #  Imagem do MYSQL, passa os dados de um usuário root por meio do .env
+  mysql:
+    image: mysql:8.3.0-oracle
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - minha-net
+
+  server:
+    build:
+      dockerfile: Dockerfile
+      # Variáveis de ambiente do .env local para o .env container
+    environment:
+      - MYSQL_URL=${MYSQL_URL}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - minha-net
+
+networks:
+  minha-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
