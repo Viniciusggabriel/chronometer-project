@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ClientConnectionFactoryManage implements ClientConnectionFactory {
+public class ClientConnectionManage implements ClientConnectionFactory {
     @Override
     public HttpURLConnection getConnection(String urlRoute, String method) throws IOException {
         URL urlConnection = new URL(urlRoute);

@@ -1,4 +1,4 @@
 package view.dto;
 
-public record OperationPostClientResult(String data, OperationResult operationResult) {
+public record OperationPostClientResult(int milliseconds, int seconds, int minutes, int hours) {
 }

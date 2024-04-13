@@ -88,7 +88,7 @@ Para configurar e executar o projeto em seu ambiente local, siga os passos abaix
 - Documentação Back-end: [Back-end](https://github.com/Viniciusggabriel/lap-counter-aps/tree/main/backend-counter)
 ---
 ### Referencias
-- Imagem: [Docker hub](https://hub.docker.com/repository/docker/viniciusgggabriel/backend-counter-server/general)
+- Imagem: [Docker hub](https://hub.docker.com/repository/docker/viniciusgggabriel/telemetry-back-end/general)
 - Documentações e
   artigos: [Learn java](https://dev.java/learn/), [MySQL documentação](https://dev.mysql.com/doc/), [Imagem maven e jdk](https://hub.docker.com/explore)
 - Videos: [JDBC 01](https://youtu.be/VSWXK5j7sH0?si=J5Qo8rOEWNpMUpEf), [JDBC 02](https://youtu.be/YVRp4bpow48?si=LotM8_62B75dAxY9), [Java Swing](https://youtube.com/playlist?list=PLwH4Cv_WLhLbc4H-aOh3xFywPGxhaso_b&si=8MHZyM4Ql9XK1Q7n), [Docker image](https://www.youtube.com/watch?v=t9L__Y0E5OY&list=WL&index=5)

@@ -2,8 +2,7 @@ package view.client.routes;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import view.client.connection.ClientConnectionFactory;
-import view.client.connection.ClientConnectionFactoryManage;
+import view.client.connection.ClientConnectionManage;
 import view.dto.OperationResult;
 import view.dto.OperationGetClientResult;
 
@@ -14,16 +13,16 @@ import java.net.HttpURLConnection;
 import java.util.Map;
 
 public class GetClient implements ClientGet {
-    private final ClientConnectionFactory clientConnectionFactoryManage;
+    private final ClientConnectionManage ClientConnectionManage;
 
-    public GetClient(ClientConnectionFactoryManage clientConnectionManage) {
-        this.clientConnectionFactoryManage = clientConnectionManage;
+    public GetClient(ClientConnectionManage clientConnectionManage) {
+        this.ClientConnectionManage = clientConnectionManage;
     }
 
     @Override
     public OperationGetClientResult clientGetHandler() throws IOException {
         try {
-            HttpURLConnection urlConnection = clientConnectionFactoryManage.getConnection("http://localhost:8080/select", "GET");
+            HttpURLConnection urlConnection = ClientConnectionManage.getConnection("http://localhost:8080/select", "GET");
 
             int responseCode = urlConnection.getResponseCode();
 
@@ -43,7 +42,7 @@ public class GetClient implements ClientGet {
                 String jsonResponse = response.toString();
                 Gson gson = new Gson();
 
-                clientConnectionFactoryManage.closeConnection(urlConnection);
+                ClientConnectionManage.closeConnection(urlConnection);
 
                 // DTO
                 // fromJson funciona pegando a String json, o modo que você quer no caso qualquer um com um mapa dentro chave String: Valor Objeto

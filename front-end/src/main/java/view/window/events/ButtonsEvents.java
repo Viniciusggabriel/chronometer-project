@@ -1,19 +1,20 @@
 package view.window.events;
 
-import view.client.connection.ClientConnectionFactoryManage;
+import com.google.gson.Gson;
+import view.client.connection.ClientConnectionManage;
 import view.client.routes.PostClient;
 import view.dto.OperationPostClientResult;
+import view.dto.OperationResult;
 import view.window.layout.Layout;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.time.Duration;
-import java.util.Locale;
 
 public class ButtonsEvents implements ButtonsEventsFactory {
-    private final Layout layout;
+    Gson gson = new Gson();
     Timer timer;
+    private final Layout layout;
     private int minutesTimer, secondsTimer, millisecondsTimer = 0;
     private String resultTimer;
 
@@ -37,15 +38,17 @@ public class ButtonsEvents implements ButtonsEventsFactory {
                     secondsTimer = 0;
                     layout.setMinutes(String.valueOf(minutesTimer));
                 }
-            }
+                if (minutesTimer >= 60) {
+                    minutesTimer = 0;
+                    secondsTimer = 0;
+                    millisecondsTimer = 0;
+                }
+                OperationPostClientResult operationPostClientResult = new OperationPostClientResult(millisecondsTimer, secondsTimer, minutesTimer, 0);
 
-            Duration duration = Duration.ofMinutes(minutesTimer).plusSeconds(secondsTimer).plusMillis(millisecondsTimer); // Pega todos os tempos e soma
-            long durationToMilli = duration.toMillis();
-            resultTimer = String.format(Locale.ENGLISH, "%02d:%02d:%03d",
-                    durationToMilli / 60000,
-                    (durationToMilli % 60000) / 1000,
-                    (durationToMilli % 1000));
+                resultTimer = gson.toJson(operationPostClientResult);
+            }
         });
+
         timer.start();
         layout.setTrueReset(true);
     }
@@ -54,22 +57,21 @@ public class ButtonsEvents implements ButtonsEventsFactory {
     public void buttonReset(JButton bReset) {
         bReset.setBackground(Color.GREEN);
 
-        ClientConnectionFactoryManage clientConnectionFactoryManage = new ClientConnectionFactoryManage();
-        PostClient postClient = new PostClient(clientConnectionFactoryManage);
+        ClientConnectionManage clientConnectionManage = new ClientConnectionManage();
+        PostClient postClient = new PostClient(clientConnectionManage);
 
-        OperationPostClientResult operationPostClientResult;
+        OperationResult operationResult; // Todo: resulTimer is null
         try {
-            operationPostClientResult = postClient.clientPostHandler(String.valueOf(resultTimer));
+            operationResult = postClient.clientPostHandler(resultTimer);
 
-            if (operationPostClientResult.operationResult().operationCode() != 201) {
-                JOptionPane.showMessageDialog(null, operationPostClientResult.operationResult());
+            if (operationResult.operationCode() != 201) {
+                JOptionPane.showMessageDialog(null, "Erro: " + operationResult.operationMessage() + " Código: " + operationResult.operationCode());
             } else {
-                JOptionPane.showMessageDialog(null, operationPostClientResult.operationResult() + " " + operationPostClientResult.data());
+                JOptionPane.showMessageDialog(null, operationResult.operationMessage());
             }
         } catch (IOException error) {
             JOptionPane.showMessageDialog(null, "Erro ao inserir valores para requisição: " + error);
         } finally {
-            timer.stop();
 
             // Reinicie as variáveis do cronômetro
             millisecondsTimer = 0;

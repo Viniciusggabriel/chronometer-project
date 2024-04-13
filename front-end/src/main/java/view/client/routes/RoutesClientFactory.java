@@ -2,6 +2,7 @@ package view.client.routes;
 
 import view.dto.OperationGetClientResult;
 import view.dto.OperationPostClientResult;
+import view.dto.OperationResult;
 
 import java.io.IOException;
 
@@ -10,5 +11,5 @@ interface ClientGet {
 }
 
 interface  ClientPost {
-    OperationPostClientResult clientPostHandler(String data) throws IOException;
+    OperationResult clientPostHandler(String data) throws IOException;
 }
