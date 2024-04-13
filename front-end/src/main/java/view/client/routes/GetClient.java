@@ -23,7 +23,7 @@ public class GetClient implements ClientGet {
     @Override
     public OperationGetClientResult clientGetHandler() throws IOException {
         try {
-            HttpURLConnection urlConnection = clientConnectionFactoryManage.getConnection("http://localhost:8080/", "GET");
+            HttpURLConnection urlConnection = clientConnectionFactoryManage.getConnection("http://localhost:8080/select", "GET");
 
             int responseCode = urlConnection.getResponseCode();
 

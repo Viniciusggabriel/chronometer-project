@@ -16,9 +16,8 @@ services:
       - minha-net
 
   server:
-    build:
-      dockerfile: Dockerfile
-      # Variáveis de ambiente do .env local para o .env container
+    image: viniciusgggabriel/telemetry-back-end:1.0.0
+    # Variáveis de ambiente do .env local para o .env container
     environment:
       - MYSQL_URL=${MYSQL_URL}
       - MYSQL_USER=${MYSQL_USER}
