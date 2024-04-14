@@ -1,6 +1,5 @@
 package view.client.routes;
 
-import view.client.connection.ClientConnectionFactory;
 import view.client.connection.ClientConnectionManage;
 import view.dto.OperationResult;
 
@@ -10,16 +9,16 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 
 public class PostClient implements ClientPost {
-    private final ClientConnectionFactory clientConnectionFactoryManage;
+    private final ClientConnectionManage clientConnectionManage;
 
     public PostClient(ClientConnectionManage clientConnectionManage) {
-        this.clientConnectionFactoryManage = clientConnectionManage;
+        this.clientConnectionManage = clientConnectionManage;
     }
 
     @Override
     public OperationResult clientPostHandler(String data) throws IOException {
         try {
-            HttpURLConnection urlConnection = clientConnectionFactoryManage.getConnection("http://localhost:8080/submit", "POST");
+            HttpURLConnection urlConnection = clientConnectionManage.getConnection("http://localhost:8080/submit", "POST");
             urlConnection.setDoOutput(true);
 
             // Escreve os dados no corpo da solicitação

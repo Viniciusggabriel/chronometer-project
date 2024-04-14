@@ -46,8 +46,9 @@ public class GetClient implements ClientGet {
 
                 // DTO
                 // fromJson funciona pegando a String json, o modo que você quer no caso qualquer um com um mapa dentro chave String: Valor Objeto
+                OperationResult operationResult = new OperationResult(responseCode, "Sucesso ao buscar dados dentro do server");
                 return new OperationGetClientResult(gson.fromJson(jsonResponse, new TypeToken<Map<String, Object>>() {
-                }.getType()), null);
+                }.getType()), operationResult);
             } else {
                 OperationResult operationResult = new OperationResult(responseCode, "Erro interno do servidor");
                 return new OperationGetClientResult(null, operationResult);
