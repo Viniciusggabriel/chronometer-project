@@ -11,15 +11,14 @@ import view.window.layout.Layout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Map;
 
 public class ButtonsEvents implements ButtonsEventsFactory {
     Layout layout;
-    Timer timer;
-    private int millisecondssTimer, secondsTimer, minutesTimer, hoursTimer;
+    Thread stopWatch;
+    private static volatile boolean timerState = true;
+    private long millisecondsTimer, secondsTimer, minutesTimer, hoursTimer;
 
     public ButtonsEvents(Layout layout) {
         this.layout = layout;
@@ -29,29 +28,43 @@ public class ButtonsEvents implements ButtonsEventsFactory {
     public void buttonRun(JButton bRun) {
         bRun.setBackground(Color.green);
 
-        timer = new Timer(1, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                millisecondssTimer++;
-                layout.setMilliseconds(String.valueOf(millisecondssTimer));
-                if (millisecondssTimer >= 1000) {
-                    secondsTimer++;
-                    millisecondssTimer = 0;
-                    layout.setSeconds(String.valueOf(secondsTimer));
-                    if (secondsTimer >= 60) {
-                        minutesTimer++;
-                        secondsTimer = 0;
-                        layout.setMinutes(String.valueOf(minutesTimer));
-                    }
+        stopWatch = new Thread(() -> {
+            long startTime = System.currentTimeMillis(); // Tempo de inicio do sistema
+
+            while (timerState) {
+                long elapsedTime = System.currentTimeMillis() - startTime; // Tempo atual sendo comparado com o de inicio
+
+                minutesTimer = elapsedTime / (1000 * 60);
+                secondsTimer = (elapsedTime / 1000) % 60;
+                millisecondsTimer = elapsedTime % 1000;
+
+                layout.setMilliseconds(String.valueOf(millisecondsTimer));
+                layout.setSeconds(String.valueOf(secondsTimer));
+                layout.setMinutes(String.valueOf(minutesTimer));
+
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException error) {
+                    JOptionPane.showMessageDialog(null, "Erro ao iniciar a cronometro: " + error);
                 }
             }
         });
 
-        timer.start();
+        stopWatch.start();
     }
 
     @Override
-    public void buttonReset(JButton bReset) throws IOException {
+    public void buttonInsert(JButton bInsert) throws IOException {
+        timerState = false;
+
+        if (stopWatch != null) {
+            try {
+                stopWatch.join();
+            } catch (InterruptedException error) {
+                JOptionPane.showMessageDialog(null, "Erro ao encerrar cronometro: " + error);
+            }
+        }
+
         ClientConnectionManage clientConnectionManage = new ClientConnectionManage();
         PostClient postClient = new PostClient(clientConnectionManage);
 

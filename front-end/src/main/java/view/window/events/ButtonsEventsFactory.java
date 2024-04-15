@@ -6,7 +6,7 @@ import java.io.IOException;
 public interface ButtonsEventsFactory {
     void buttonRun(JButton bRun);
 
-    void buttonReset(JButton bReset) throws IOException;
+    void buttonInsert(JButton bRese) throws IOException;
 
     void buttonGetLaps(JButton bRequest) throws IOException;
 

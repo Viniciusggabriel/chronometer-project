@@ -87,7 +87,7 @@ public class Layout extends WindowAdapter implements ActionListener, LayoutFacto
         bRun.addActionListener(this);
         panelButtons.add(bRun, gridBagConstraints);
         // Botão que reset o timer e insere o valor atual
-        bReset = new JButton("Reset");
+        bReset = new JButton("Inserir");
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         bReset.addActionListener(this);
@@ -125,7 +125,7 @@ public class Layout extends WindowAdapter implements ActionListener, LayoutFacto
             buttonsEvents.buttonRun(bRun);
         } else if (jButton.equals(bReset)) {
             try {
-                buttonsEvents.buttonReset(bReset);
+                buttonsEvents.buttonInsert(bReset);
             } catch (IOException error) {
                 throw new RuntimeException(error);
             }
