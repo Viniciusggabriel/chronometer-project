@@ -83,11 +83,6 @@ Para configurar e executar o projeto em seu ambiente local, siga os passos abaix
 6. Dentro do docker vá nos arquivos do seu projeto e altere os valores do .env dentro do diretório /app.
 
 ## Links
-
-### Rotas
-- Documentação Back-end: [Back-end](https://github.com/Viniciusggabriel/lap-counter-aps/tree/main/backend-counter)
----
-### Referencias
 - Imagem: [Docker hub](https://hub.docker.com/repository/docker/viniciusgggabriel/telemetry-back-end/general)
 - Documentações e
   artigos: [Learn java](https://dev.java/learn/), [MySQL documentação](https://dev.mysql.com/doc/), [Imagem maven e jdk](https://hub.docker.com/explore)
